@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard · Procesos de Compras Públicas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f6f9;
+    --bg-elevated: #ffffff;
+    --border: #e2e5eb;
+    --text-primary: #14171f;
+    --text-secondary: #5b6270;
+    --accent: #3457d5;
+    --accent-soft: #e9edfc;
+    --success: #1c9c6c;
+    --warning: #d98a10;
+    --danger: #d1453b;
+    --shadow: 0 1px 2px rgba(20,23,31,0.04), 0 4px 16px rgba(20,23,31,0.06);
+    --donut-1: #3457d5;
+    --donut-2: #1c9c6c;
+    --donut-3: #d98a10;
+    --donut-4: #a25bd9;
+    --donut-5: #d1453b;
+    --donut-6: #14a7b8;
+    --radius: 14px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #10121a;
+    --bg-elevated: #1a1d29;
+    --border: #2a2e3d;
+    --text-primary: #eef0f6;
+    --text-secondary: #9aa1b5;
+    --accent: #6a86ff;
+    --accent-soft: #232a4a;
+    --success: #3fcf94;
+    --warning: #f0ab3f;
+    --danger: #f16863;
+    --shadow: 0 1px 2px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    transition: background 0.25s ease, color 0.25s ease;
+    min-height: 100vh;
+  }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 28px 24px 60px;
+  }
+
+  header.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .brand h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .brand span {
+    color: var(--text-secondary);
+    font-size: 13.5px;
+  }
+
+  .top-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  button {
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 13.5px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.12s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+  button:hover { border-color: var(--accent); }
+  button:active { transform: scale(0.97); }
+
+  #syncBtn {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  #syncBtn:disabled { opacity: 0.65; cursor: progress; }
+
+  #themeBtn { width: 42px; justify-content: center; padding: 10px; font-size: 16px; }
+
+  .status-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .status-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    margin-right: 6px;
+    background: var(--text-secondary);
+  }
+  .status-dot.live { background: var(--success); }
+  .status-dot.demo { background: var(--warning); }
+  .status-dot.error { background: var(--danger); }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .kpi-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+  }
+
+  .kpi-card .label {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
+
+  .kpi-card .value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .kpi-card .value.mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+  }
+
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .panel {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    box-shadow: var(--shadow);
+  }
+
+  .panel h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    margin: 0 0 16px;
+  }
+
+  .filters {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .search-box input {
+    border: none;
+    background: transparent;
+    outline: none;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-secondary);
+    padding: 6px 13px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+  .chip.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    flex: 1;
+    min-width: 160px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .legend-swatch {
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .legend-item .pct {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-secondary);
+    font-size: 12px;
+  }
+
+  .table-panel { padding: 0; overflow: hidden; }
+  .table-panel .table-head {
+    padding: 22px 22px 0;
+  }
+  .table-scroll {
+    overflow-x: auto;
+    margin-top: 16px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  thead th {
+    text-align: left;
+    padding: 12px 22px;
+    background: var(--bg);
+    color: var(--text-secondary);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    user-select: none;
+  }
+  thead th:hover { color: var(--accent); }
+  thead th .arrow { opacity: 0.4; margin-left: 4px; font-size: 10px; }
+  thead th.sorted .arrow { opacity: 1; color: var(--accent); }
+
+  tbody td {
+    padding: 13px 22px;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr:hover { background: var(--accent-soft); }
+  tbody tr:last-child td { border-bottom: none; }
+
+  .mono-cell { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .badge.cerrada { background: rgba(28,156,108,0.14); color: var(--success); }
+  .badge.proceso { background: rgba(217,138,16,0.14); color: var(--warning); }
+  .badge.default { background: var(--accent-soft); color: var(--accent); }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+
+  footer.note {
+    margin-top: 24px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+  }
+
+  @media (max-width: 900px) {
+    .kpi-grid { grid-template-columns: 1fr; }
+    .main-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body data-theme="light">
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <h1>Procesos de Compras Públicas</h1>
+      <span>Panel ejecutivo sincronizado con Google Sheets</span>
+      <div class="status-line" id="statusLine"><span class="status-dot"></span>Cargando…</div>
+    </div>
+    <div class="top-actions">
+      <button id="syncBtn">⟳ Sincronizar Google Sheets</button>
+      <button id="themeBtn" title="Cambiar tema">🌙</button>
+    </div>
+  </header>
+
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="label">Valor total contratado</div>
+      <div class="value mono" id="kpiTotal">$0</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Valor promedio por contrato</div>
+      <div class="value mono" id="kpiAvg">$0</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Procesos registrados</div>
+      <div class="value" id="kpiCount">0</div>
+    </div>
+  </section>
+
+  <section class="main-grid">
+    <div class="panel">
+      <h2>Distribución del valor por fase precontractual</h2>
+      <div class="donut-wrap">
+        <div id="donutHolder"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Filtros</h2>
+      <div class="filters">
+        <div class="search-box">
+          <span>🔎</span>
+          <input type="text" id="searchInput" placeholder="Buscar por empresa, fase o estatus…" />
+        </div>
+        <div>
+          <div class="label" style="font-size:12px;color:var(--text-secondary);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em;">Estatus</div>
+          <div class="chips" id="statusChips"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel table-panel">
+    <div class="table-head">
+      <h2>Detalle de procesos</h2>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th data-key="empresa">Empresa <span class="arrow">▲</span></th>
+            <th data-key="cantidadCajas">Cantidad de cajas <span class="arrow">▲</span></th>
+            <th data-key="valorContrato">Valor del contrato <span class="arrow">▲</span></th>
+            <th data-key="fasePrecontractual">Fase precontractual <span class="arrow">▲</span></th>
+            <th data-key="estatus">Estatus <span class="arrow">▲</span></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none;">No hay registros que coincidan con los filtros.</div>
+    </div>
+  </section>
+
+  <footer class="note">Modo demo activo mientras no haya sincronización real. Los datos se actualizan al pulsar "Sincronizar Google Sheets".</footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Datos de demostración (respaldo si falla la sincronización) ----------
+  const DEMO_DATA = [
+    { empresa: "EPMT-SD - 2026", cantidadCajas: 3701, valorContrato: 32947.5, fasePrecontractual: "ESTUDIO DE MERCADO", estatus: "CERRADA" },
+    { empresa: "EPMT-SD - 2026", cantidadCajas: 3701, valorContrato: 23673.4, fasePrecontractual: "CONTRATO FIRMADO", estatus: "CERRADA" },
+    { empresa: "MINISTERIO DE AMBIENTE Y ENERGIA", cantidadCajas: 24250, valorContrato: 255000, fasePrecontractual: "ESTUDIO DE MERCADO", estatus: "CERRADA" },
+    { empresa: "MINISTERIO DE AMBIENTE Y ENERGIA", cantidadCajas: 24250, valorContrato: 83323.82, fasePrecontractual: "CONTRATO FIRMADO", estatus: "CERRADA" },
+    { empresa: "SPPAT 2", cantidadCajas: 1338, valorContrato: 5539.32, fasePrecontractual: "ESTUDIO DE MERCADO", estatus: "CERRADA" },
+    { empresa: "SPPAT 2", cantidadCajas: 1338, valorContrato: 6462.54, fasePrecontractual: "INFIMA FIRMADA", estatus: "CERRADA" },
+    { empresa: "METRO DE QUITO", cantidadCajas: 2035, valorContrato: 8008.96, fasePrecontractual: "ESTUDIO DE MERCADO", estatus: "CERRADA" },
+    { empresa: "SENADI", cantidadCajas: 7000, valorContrato: 33534, fasePrecontractual: "ESTUDIO DE MERCADO", estatus: "CERRADA" },
+    { empresa: "GOBIERNO PROVINCIAL DEL GUAYAS", cantidadCajas: 7000, valorContrato: 108675, fasePrecontractual: "ESTUDIO DE MERCADO", estatus: "CERRADA" },
+    { empresa: "SENADI", cantidadCajas: 7000, valorContrato: 9990, fasePrecontractual: "INFIMA CUANTIA", estatus: "PROCESO" }
+  ];
+
+  const DONUT_COLORS = ["--donut-1","--donut-2","--donut-3","--donut-4","--donut-5","--donut-6"];
+
+  let state = {
+    rows: [],
+    filtered: [],
+    search: "",
+    activeStatus: "TODOS",
+    sortKey: "valorContrato",
+    sortDir: "desc",
+    mode: "demo" // 'live' | 'demo' | 'error'
+  };
+
+  const el = (id) => document.getElementById(id);
+
+  // ---------- Formato ----------
+  const currencyFmt = new Intl.NumberFormat("es-EC", { style: "currency", currency: "USD", maximumFractionDigits: 2 });
+  const numberFmt = new Intl.NumberFormat("es-EC");
+
+  function formatCurrency(n) { return currencyFmt.format(n || 0); }
+  function formatNumber(n) { return numberFmt.format(n || 0); }
+
+  // ---------- Tema ----------
+  function initTheme() {
+    const saved = localStorage.getItem("dashboard-theme");
+    const theme = saved || "light";
+    document.body.setAttribute("data-theme", theme);
+    el("themeBtn").textContent = theme === "dark" ? "☀️" : "🌙";
+  }
+  el("themeBtn").addEventListener("click", () => {
+    const current = document.body.getAttribute("data-theme");
+    const next = current === "dark" ? "light" : "dark";
+    document.body.setAttribute("data-theme", next);
+    localStorage.setItem("dashboard-theme", next);
+    el("themeBtn").textContent = next === "dark" ? "☀️" : "🌙";
+    renderDonut(); // recolorear con el nuevo tema
+  });
+
+  // ---------- Estado de sincronización ----------
+  function setStatus(mode, extraText) {
+    state.mode = mode;
+    const line = el("statusLine");
+    const dotClass = mode === "live" ? "live" : mode === "error" ? "error" : "demo";
+    const texts = {
+      live: "Datos en vivo desde Google Sheets",
+      demo: "Modo demostración (datos de respaldo)",
+      error: "Error de sincronización — usando datos de respaldo"
+    };
+    line.innerHTML = `<span class="status-dot ${dotClass}"></span>${extraText || texts[mode]}`;
+  }
+
+  // ---------- Sincronización ----------
+  async function syncData() {
+    const btn = el("syncBtn");
+    btn.disabled = true;
+    btn.textContent = "⟳ Sincronizando…";
+    try {
+      const res = await fetch("/api/dashboard");
+      if (!res.ok) throw new Error("Respuesta no válida del servidor");
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error || "Fallo desconocido");
+      state.rows = json.ventas || [];
+      const syncedDate = new Date(json.syncedAt);
+      setStatus("live", `Sincronizado a las ${syncedDate.toLocaleTimeString("es-EC")}`);
+    } catch (err) {
+      console.warn("Fallo la sincronización, usando datos demo:", err.message);
+      state.rows = DEMO_DATA;
+      setStatus("error");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "⟳ Sincronizar Google Sheets";
+      buildStatusChips();
+      applyFilters();
+    }
+  }
+
+  // ---------- Filtros ----------
+  function buildStatusChips() {
+    const statuses = Array.from(new Set(state.rows.map(r => r.estatus).filter(Boolean)));
+    const holder = el("statusChips");
+    holder.innerHTML = "";
+
+    const allChip = document.createElement("div");
+    allChip.className = "chip" + (state.activeStatus === "TODOS" ? " active" : "");
+    allChip.textContent = "Todos";
+    allChip.addEventListener("click", () => { state.activeStatus = "TODOS"; buildStatusChips(); applyFilters(); });
+    holder.appendChild(allChip);
+
+    statuses.forEach(s => {
+      const chip = document.createElement("div");
+      chip.className = "chip" + (state.activeStatus === s ? " active" : "");
+      chip.textContent = s;
+      chip.addEventListener("click", () => { state.activeStatus = s; buildStatusChips(); applyFilters(); });
+      holder.appendChild(chip);
+    });
+  }
+
+  el("searchInput").addEventListener("input", (e) => {
+    state.search = e.target.value.trim().toLowerCase();
+    applyFilters();
+  });
+
+  function applyFilters() {
+    let rows = state.rows.slice();
+
+    if (state.activeStatus !== "TODOS") {
+      rows = rows.filter(r => r.estatus === state.activeStatus);
+    }
+
+    if (state.search) {
+      rows = rows.filter(r =>
+        String(r.empresa).toLowerCase().includes(state.search) ||
+        String(r.fasePrecontractual).toLowerCase().includes(state.search) ||
+        String(r.estatus).toLowerCase().includes(state.search)
+      );
+    }
+
+    state.filtered = rows;
+    sortRows();
+    renderKPIs();
+    renderTable();
+    renderDonut();
+  }
+
+  // ---------- Orden de tabla ----------
+  function sortRows() {
+    const { sortKey, sortDir } = state;
+    state.filtered.sort((a, b) => {
+      let va = a[sortKey], vb = b[sortKey];
+      if (typeof va === "string") { va = va.toLowerCase(); vb = String(vb).toLowerCase(); }
+      if (va < vb) return sortDir === "asc" ? -1 : 1;
+      if (va > vb) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
+  }
+
+  document.querySelectorAll("thead th").forEach(th => {
+    th.addEventListener("click", () => {
+      const key = th.dataset.key;
+      if (state.sortKey === key) {
+        state.sortDir = state.sortDir === "asc" ? "desc" : "asc";
+      } else {
+        state.sortKey = key;
+        state.sortDir = "asc";
+      }
+      document.querySelectorAll("thead th").forEach(h => {
+        h.classList.remove("sorted");
+        h.querySelector(".arrow").textContent = "▲";
+      });
+      th.classList.add("sorted");
+      th.querySelector(".arrow").textContent = state.sortDir === "asc" ? "▲" : "▼";
+      sortRows();
+      renderTable();
+    });
+  });
+
+  // ---------- Render KPIs ----------
+  function renderKPIs() {
+    const rows = state.filtered;
+    const total = rows.reduce((sum, r) => sum + (Number(r.valorContrato) || 0), 0);
+    const avg = rows.length ? total / rows.length : 0;
+    el("kpiTotal").textContent = formatCurrency(total);
+    el("kpiAvg").textContent = formatCurrency(avg);
+    el("kpiCount").textContent = formatNumber(rows.length);
+  }
+
+  // ---------- Render tabla ----------
+  function badgeFor(status) {
+    const key = String(status || "").toLowerCase();
+    let cls = "default";
+    if (key === "cerrada") cls = "cerrada";
+    else if (key === "proceso") cls = "proceso";
+    return `<span class="badge ${cls}">${status || "—"}</span>`;
+  }
+
+  function renderTable() {
+    const tbody = el("tableBody");
+    const empty = el("emptyState");
+    tbody.innerHTML = "";
+
+    if (state.filtered.length === 0) {
+      empty.style.display = "block";
+      return;
+    }
+    empty.style.display = "none";
+
+    state.filtered.forEach(r => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${escapeHtml(r.empresa)}</td>
+        <td class="mono-cell">${formatNumber(r.cantidadCajas)}</td>
+        <td class="mono-cell">${formatCurrency(r.valorContrato)}</td>
+        <td>${escapeHtml(r.fasePrecontractual)}</td>
+        <td>${badgeFor(r.estatus)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str === undefined || str === null ? "" : str;
+    return div.innerHTML;
+  }
+
+  // ---------- Dona SVG pura ----------
+  function renderDonut() {
+    const holder = el("donutHolder");
+    const legend = el("legend");
+    holder.innerHTML = "";
+    legend.innerHTML = "";
+
+    const rows = state.filtered;
+    const groups = {};
+    rows.forEach(r => {
+      const key = r.fasePrecontractual || "Sin fase";
+      groups[key] = (groups[key] || 0) + (Number(r.valorContrato) || 0);
+    });
+
+    const entries = Object.entries(groups).sort((a, b) => b[1] - a[1]);
+    const total = entries.reduce((s, [, v]) => s + v, 0);
+
+    const size = 200;
+    const radius = 80;
+    const strokeWidth = 30;
+    const cx = size / 2;
+    const cy = size / 2;
+    const circumference = 2 * Math.PI * radius;
+
+    const styles = getComputedStyle(document.body);
+
+    let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`;
+
+    if (total === 0) {
+      svg += `<circle cx="${cx}" cy="${cy}" r="${radius}" fill="none" stroke="${styles.getPropertyValue('--border')}" stroke-width="${strokeWidth}" />`;
+    } else {
+      let offsetAcc = 0;
+      entries.forEach(([, value], idx) => {
+        const fraction = value / total;
+        const dash = fraction * circumference;
+        const gap = circumference - dash;
+        const color = styles.getPropertyValue(DONUT_COLORS[idx % DONUT_COLORS.length]).trim();
+        svg += `<circle cx="${cx}" cy="${cy}" r="${radius}" fill="none"
+          stroke="${color}" stroke-width="${strokeWidth}"
+          stroke-dasharray="${dash} ${gap}"
+          stroke-dashoffset="${-offsetAcc}"
+          transform="rotate(-90 ${cx} ${cy})" />`;
+        offsetAcc += dash;
+      });
+    }
+
+    svg += `<circle cx="${cx}" cy="${cy}" r="${radius - strokeWidth / 2 - 4}" fill="${styles.getPropertyValue('--bg-elevated')}" />`;
+    svg += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="18" fill="${styles.getPropertyValue('--text-primary')}">${formatCurrency(total).replace('.00','')}</text>`;
+    svg += `<text x="${cx}" y="${cy + 16}" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="${styles.getPropertyValue('--text-secondary')}">Valor total</text>`;
+    svg += `</svg>`;
+
+    holder.innerHTML = svg;
+
+    entries.forEach(([label, value], idx) => {
+      const pct = total ? ((value / total) * 100).toFixed(1) : "0.0";
+      const color = styles.getPropertyValue(DONUT_COLORS[idx % DONUT_COLORS.length]).trim();
+      const item = document.createElement("div");
+      item.className = "legend-item";
+      item.innerHTML = `<span class="legend-swatch" style="background:${color}"></span>${label}<span class="pct">${pct}%</span>`;
+      legend.appendChild(item);
+    });
+
+    if (entries.length === 0) {
+      legend.innerHTML = `<div style="color:var(--text-secondary);font-size:13px;">Sin datos para mostrar</div>`;
+    }
+  }
+
+  // ---------- Inicialización ----------
+  el("syncBtn").addEventListener("click", syncData);
+
+  initTheme();
+  state.rows = DEMO_DATA;
+  setStatus("demo");
+  buildStatusChips();
+  applyFilters();
+  syncData(); // intenta sincronizar automáticamente al cargar
+})();
+</script>
+
+<!-- Widget de chat Landbot -->
+<script type="module" src="https://cdn.landbot.io/landbot-3/landbot-3.0.0.mjs"></script>
+<script type="module">
+  var myLandbot = new Landbot.Livechat({
+    configUrl: 'https://storage.googleapis.com/landbot.online/v3/H-3514891-47NH2HF94N9RQHJT/index.json',
+  });
+</script>
+</body>
+</html>
