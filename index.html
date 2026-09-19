@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Libro de Ventas — Panel Ejecutivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0b1220;
+    --surface: #121b2e;
+    --surface-2: #182338;
+    --border: #223049;
+    --text: #e7ecf5;
+    --text-muted: #94a3b8;
+    --brass: #d1a054;
+    --brass-soft: rgba(209, 160, 84, 0.14);
+    --teal: #3fada0;
+    --teal-soft: rgba(63, 173, 160, 0.14);
+    --danger: #d1685a;
+
+    --chart-1: #d1a054;
+    --chart-2: #3fada0;
+    --chart-3: #5b84b8;
+    --chart-4: #a5729e;
+    --chart-5: #b96a4f;
+    --chart-6: #8b9a5a;
+    --chart-7: #c2c2c2;
+
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+    --radius-s: 3px;
+    --font-display: "Space Grotesk", sans-serif;
+    --font-body: "Inter", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+  }
+
+  :root[data-theme="light"] {
+    --bg: #f1efe6;
+    --surface: #ffffff;
+    --surface-2: #faf8f1;
+    --border: #ddd7c7;
+    --text: #1c2130;
+    --text-muted: #6b7280;
+    --brass: #a5722a;
+    --brass-soft: rgba(165, 114, 42, 0.1);
+    --teal: #206b60;
+    --teal-soft: rgba(32, 107, 96, 0.1);
+    --danger: #a5402f;
+    --shadow: 0 1px 0 rgba(28, 33, 48, 0.06);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100vh;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+
+  a { color: inherit; }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 24px 80px;
+  }
+
+  /* ---------- Header ---------- */
+  header.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .brand .mark {
+    width: 10px;
+    height: 10px;
+    background: var(--brass);
+    display: inline-block;
+    transform: rotate(45deg);
+    position: relative;
+    top: -2px;
+  }
+
+  .brand h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 20px;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .brand .sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-left: 4px;
+  }
+
+  .top-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .status-pill {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .status-pill .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+  }
+
+  .status-pill.demo .dot { background: var(--brass); }
+
+  button {
+    font-family: var(--font-body);
+    cursor: pointer;
+  }
+
+  .btn {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 16px;
+    border-radius: var(--radius-s);
+    font-size: 13.5px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .btn:hover { border-color: var(--brass); }
+
+  .btn.primary {
+    background: var(--brass);
+    border-color: var(--brass);
+    color: #1a1305;
+  }
+
+  :root[data-theme="light"] .btn.primary { color: #fffaf0; }
+
+  .btn.primary:hover { filter: brightness(1.06); }
+
+  .btn.icon-only {
+    padding: 9px 11px;
+  }
+
+  .btn[disabled] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .spin {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    display: inline-block;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- KPI cards ---------- */
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 22px;
+  }
+
+  .kpi {
+    background: var(--surface);
+    padding: 22px 24px;
+    position: relative;
+  }
+
+  .kpi::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--kpi-accent, var(--brass));
+  }
+
+  .kpi:nth-child(1) { --kpi-accent: var(--brass); }
+  .kpi:nth-child(2) { --kpi-accent: var(--teal); }
+  .kpi:nth-child(3) { --kpi-accent: var(--chart-4); }
+
+  .kpi .label {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .kpi .value {
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .kpi .value small {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-left: 4px;
+  }
+
+  /* ---------- Main grid: chart + filters ---------- */
+  .panel-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1.6fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 22px;
+  }
+
+  .panel {
+    background: var(--surface);
+    padding: 22px 24px;
+  }
+
+  .panel h2 {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+
+  .panel .panel-sub {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  .group-toggle {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-s);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .group-toggle button {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 12.5px;
+    padding: 6px 12px;
+    font-weight: 500;
+  }
+
+  .group-toggle button.active {
+    background: var(--brass-soft);
+    color: var(--text);
+  }
+
+  .donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .donut-wrap svg { flex-shrink: 0; }
+
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    flex: 1;
+    min-width: 160px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+  }
+
+  .legend-swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .legend-name {
+    flex: 1;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .legend-value {
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+
+  /* ---------- Filters ---------- */
+  .search-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .search-row input[type="text"] {
+    flex: 1;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: var(--radius-s);
+    font-family: var(--font-body);
+    font-size: 13.5px;
+  }
+
+  .search-row input[type="text"]:focus,
+  button:focus-visible,
+  input:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 1px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .chip {
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text-muted);
+    font-size: 12.5px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-weight: 500;
+  }
+
+  .chip.active {
+    background: var(--teal-soft);
+    border-color: var(--teal);
+    color: var(--text);
+  }
+
+  .filters-summary {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .filters-summary strong { color: var(--text); font-weight: 600; }
+
+  /* ---------- Table ---------- */
+  .table-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .table-head-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .table-head-row h2 {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 640px;
+  }
+
+  thead th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  thead th:hover { color: var(--text); }
+
+  thead th .arrow {
+    margin-left: 5px;
+    opacity: 0.5;
+    font-size: 10px;
+  }
+
+  thead th.sorted .arrow { opacity: 1; color: var(--brass); }
+
+  tbody td {
+    padding: 11px 24px;
+    font-size: 13.5px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  tbody tr:hover td { background: var(--surface-2); }
+
+  td.mono, .mono-cell { font-family: var(--font-mono); font-size: 12.5px; }
+
+  td.monto {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    text-align: right;
+  }
+
+  th.th-monto { text-align: right; }
+
+  .region-tag {
+    font-size: 11.5px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .empty-state {
+    padding: 60px 24px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13.5px;
+  }
+
+  footer.foot {
+    margin-top: 26px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 860px) {
+    .kpis { grid-template-columns: 1fr; }
+    .panel-grid { grid-template-columns: 1fr; }
+    header.top { align-items: flex-start; }
+  }
+</style>
+</head>
+<body data-theme="dark">
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <span class="mark"></span>
+      <h1>Libro de Ventas</h1>
+      <span class="sub">panel ejecutivo</span>
+    </div>
+    <div class="top-actions">
+      <span class="status-pill demo" id="statusPill">
+        <span class="dot"></span>
+        <span id="statusText">Modo demo</span>
+      </span>
+      <button class="btn" id="syncBtn">Sincronizar Google Sheets</button>
+      <button class="btn icon-only" id="themeBtn" title="Cambiar tema" aria-label="Cambiar tema">🌙</button>
+    </div>
+  </header>
+
+  <section class="kpis">
+    <div class="kpi">
+      <div class="label">Total de ventas</div>
+      <div class="value" id="kpiTotal">—</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Ticket promedio</div>
+      <div class="value" id="kpiPromedio">—</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Ventas registradas</div>
+      <div class="value" id="kpiCantidad">—</div>
+    </div>
+  </section>
+
+  <section class="panel-grid">
+    <div class="panel">
+      <h2>Distribución de ventas</h2>
+      <div class="panel-sub">Participación sobre el total filtrado</div>
+      <div class="group-toggle" id="groupToggle">
+        <button class="active" data-group="producto">Por producto</button>
+        <button data-group="region">Por región</button>
+      </div>
+      <div class="donut-wrap">
+        <div id="donutHost"></div>
+        <div class="legend" id="legendHost"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Filtros</h2>
+      <div class="panel-sub">Buscar por vendedor, producto o región</div>
+      <div class="search-row">
+        <input type="text" id="searchInput" placeholder="Buscar…" autocomplete="off" />
+      </div>
+      <div class="chips" id="regionChips"></div>
+      <div class="filters-summary">
+        Mostrando <strong id="filteredCount">0</strong> de <strong id="totalCount">0</strong> registros
+      </div>
+    </div>
+  </section>
+
+  <section class="table-panel">
+    <div class="table-head-row">
+      <h2>Detalle de transacciones</h2>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th data-key="fecha">Fecha<span class="arrow"></span></th>
+            <th data-key="vendedor">Vendedor<span class="arrow"></span></th>
+            <th data-key="producto">Producto<span class="arrow"></span></th>
+            <th data-key="monto" class="th-monto">Monto<span class="arrow"></span></th>
+            <th data-key="region">Región<span class="arrow"></span></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none;">
+        No hay registros que coincidan con los filtros aplicados.
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    Última sincronización: <span id="syncedAtFoot">—</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============ Datos de demostración (respaldo si /api/dashboard falla) ============ */
+  const DEMO_VENTAS = [
+    { fecha: "2025-01-06", vendedor: "Camila Rojas", producto: "Licencia Pro", monto: 1250, region: "Norte" },
+    { fecha: "2025-01-09", vendedor: "Diego Fernández", producto: "Soporte Anual", monto: 480, region: "Sur" },
+    { fecha: "2025-01-14", vendedor: "Camila Rojas", producto: "Licencia Básica", monto: 320, region: "Norte" },
+    { fecha: "2025-01-18", vendedor: "Ana Martínez", producto: "Licencia Pro", monto: 1250, region: "Centro" },
+    { fecha: "2025-01-22", vendedor: "Luis Torres", producto: "Implementación", monto: 3200, region: "Sur" },
+    { fecha: "2025-01-27", vendedor: "Diego Fernández", producto: "Licencia Básica", monto: 320, region: "Sur" },
+    { fecha: "2025-02-02", vendedor: "Ana Martínez", producto: "Soporte Anual", monto: 480, region: "Centro" },
+    { fecha: "2025-02-05", vendedor: "Luis Torres", producto: "Licencia Pro", monto: 1250, region: "Sur" },
+    { fecha: "2025-02-11", vendedor: "Camila Rojas", producto: "Implementación", monto: 3200, region: "Norte" },
+    { fecha: "2025-02-15", vendedor: "María Sánchez", producto: "Licencia Básica", monto: 320, region: "Oriente" },
+    { fecha: "2025-02-19", vendedor: "Ana Martínez", producto: "Implementación", monto: 3200, region: "Centro" },
+    { fecha: "2025-02-24", vendedor: "Diego Fernández", producto: "Licencia Pro", monto: 1250, region: "Sur" },
+    { fecha: "2025-03-01", vendedor: "María Sánchez", producto: "Soporte Anual", monto: 480, region: "Oriente" },
+    { fecha: "2025-03-06", vendedor: "Luis Torres", producto: "Licencia Básica", monto: 320, region: "Sur" },
+    { fecha: "2025-03-10", vendedor: "Camila Rojas", producto: "Soporte Anual", monto: 480, region: "Norte" },
+    { fecha: "2025-03-15", vendedor: "María Sánchez", producto: "Licencia Pro", monto: 1250, region: "Oriente" },
+    { fecha: "2025-03-19", vendedor: "Ana Martínez", producto: "Licencia Básica", monto: 320, region: "Centro" },
+    { fecha: "2025-03-23", vendedor: "Luis Torres", producto: "Soporte Anual", monto: 480, region: "Sur" },
+    { fecha: "2025-03-28", vendedor: "Diego Fernández", producto: "Implementación", monto: 3200, region: "Sur" },
+    { fecha: "2025-04-02", vendedor: "María Sánchez", producto: "Implementación", monto: 3200, region: "Oriente" }
+  ];
+
+  const CHART_COLORS = [
+    "var(--chart-1)", "var(--chart-2)", "var(--chart-3)",
+    "var(--chart-4)", "var(--chart-5)", "var(--chart-6)", "var(--chart-7)"
+  ];
+
+  const state = {
+    ventas: [],
+    filtered: [],
+    search: "",
+    activeRegion: null,
+    sortKey: "fecha",
+    sortDir: "desc",
+    groupBy: "producto",
+    isDemo: true
+  };
+
+  const el = {
+    syncBtn: document.getElementById("syncBtn"),
+    themeBtn: document.getElementById("themeBtn"),
+    statusPill: document.getElementById("statusPill"),
+    statusText: document.getElementById("statusText"),
+    kpiTotal: document.getElementById("kpiTotal"),
+    kpiPromedio: document.getElementById("kpiPromedio"),
+    kpiCantidad: document.getElementById("kpiCantidad"),
+    donutHost: document.getElementById("donutHost"),
+    legendHost: document.getElementById("legendHost"),
+    groupToggle: document.getElementById("groupToggle"),
+    searchInput: document.getElementById("searchInput"),
+    regionChips: document.getElementById("regionChips"),
+    filteredCount: document.getElementById("filteredCount"),
+    totalCount: document.getElementById("totalCount"),
+    tableBody: document.getElementById("tableBody"),
+    emptyState: document.getElementById("emptyState"),
+    syncedAtFoot: document.getElementById("syncedAtFoot"),
+    theadRow: document.querySelector("thead tr")
+  };
+
+  /* ============ Utilidades de formato ============ */
+  const fmtMoneda = new Intl.NumberFormat("es-ES", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0
+  });
+
+  const fmtNumero = new Intl.NumberFormat("es-ES");
+
+  function fmtFecha(iso) {
+    if (!iso) return "—";
+    const partes = String(iso).split("-");
+    if (partes.length !== 3) return iso;
+    const [y, m, d] = partes;
+    return `${d}/${m}/${y}`;
+  }
+
+  /* ============ Tema ============ */
+  function initTheme() {
+    const guardado = localStorage.getItem("lv-theme");
+    const preferido = guardado || "dark";
+    document.body.setAttribute("data-theme", preferido);
+    el.themeBtn.textContent = preferido === "dark" ? "🌙" : "☀️";
+  }
+
+  el.themeBtn.addEventListener("click", () => {
+    const actual = document.body.getAttribute("data-theme");
+    const nuevo = actual === "dark" ? "light" : "dark";
+    document.body.setAttribute("data-theme", nuevo);
+    localStorage.setItem("lv-theme", nuevo);
+    el.themeBtn.textContent = nuevo === "dark" ? "🌙" : "☀️";
+    render();
+  });
+
+  /* ============ Sincronización ============ */
+  async function sincronizar() {
+    el.syncBtn.disabled = true;
+    const textoOriginal = el.syncBtn.textContent;
+    el.syncBtn.innerHTML = '<span class="spin"></span> Sincronizando…';
+
+    try {
+      const respuesta = await fetch("/api/dashboard");
+      if (!respuesta.ok) throw new Error("La API respondió con error");
+      const data = await respuesta.json();
+      if (!data.success || !Array.isArray(data.ventas)) {
+        throw new Error("Respuesta de la API inválida");
+      }
+
+      state.ventas = data.ventas;
+      state.isDemo = false;
+      setStatus(false, data.syncedAt);
+    } catch (err) {
+      state.ventas = DEMO_VENTAS;
+      state.isDemo = true;
+      setStatus(true, new Date().toISOString());
+    } finally {
+      el.syncBtn.disabled = false;
+      el.syncBtn.textContent = textoOriginal;
+      buildRegionChips();
+      applyFilters();
+      el.syncedAtFoot.textContent = new Date().toLocaleString("es-ES");
+    }
+  }
+
+  function setStatus(esDemo, syncedAt) {
+    el.statusPill.classList.toggle("demo", esDemo);
+    el.statusText.textContent = esDemo
+      ? "Modo demo (sin conexión a Sheets)"
+      : "Sincronizado con Google Sheets";
+  }
+
+  el.syncBtn.addEventListener("click", sincronizar);
+
+  /* ============ Filtros ============ */
+  function buildRegionChips() {
+    const regiones = Array.from(
+      new Set(state.ventas.map((v) => v.region).filter(Boolean))
+    ).sort();
+
+    el.regionChips.innerHTML = "";
+
+    const todas = document.createElement("button");
+    todas.className = "chip active";
+    todas.textContent = "Todas las regiones";
+    todas.dataset.region = "";
+    el.regionChips.appendChild(todas);
+
+    regiones.forEach((region) => {
+      const chip = document.createElement("button");
+      chip.className = "chip";
+      chip.textContent = region;
+      chip.dataset.region = region;
+      el.regionChips.appendChild(chip);
+    });
+
+    el.regionChips.querySelectorAll(".chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        state.activeRegion = chip.dataset.region || null;
+        el.regionChips
+          .querySelectorAll(".chip")
+          .forEach((c) => c.classList.toggle("active", c === chip));
+        applyFilters();
+      });
+    });
+  }
+
+  el.searchInput.addEventListener("input", (e) => {
+    state.search = e.target.value.trim().toLowerCase();
+    applyFilters();
+  });
+
+  function applyFilters() {
+    state.filtered = state.ventas.filter((v) => {
+      const coincideRegion =
+        !state.activeRegion || v.region === state.activeRegion;
+      if (!coincideRegion) return false;
+
+      if (!state.search) return true;
+      const texto = `${v.vendedor} ${v.producto} ${v.region}`.toLowerCase();
+      return texto.includes(state.search);
+    });
+
+    sortFiltered();
+    render();
+  }
+
+  /* ============ Orden de tabla ============ */
+  el.theadRow.querySelectorAll("th").forEach((th) => {
+    th.addEventListener("click", () => {
+      const key = th.dataset.key;
+      if (state.sortKey === key) {
+        state.sortDir = state.sortDir === "asc" ? "desc" : "asc";
+      } else {
+        state.sortKey = key;
+        state.sortDir = key === "monto" ? "desc" : "asc";
+      }
+      sortFiltered();
+      renderTable();
+      renderSortIndicators();
+    });
+  });
+
+  function sortFiltered() {
+    const { sortKey, sortDir } = state;
+    const dir = sortDir === "asc" ? 1 : -1;
+
+    state.filtered.sort((a, b) => {
+      let va = a[sortKey];
+      let vb = b[sortKey];
+
+      if (sortKey === "monto") {
+        return (va - vb) * dir;
+      }
+
+      if (sortKey === "fecha") {
+        return (String(va) > String(vb) ? 1 : va === vb ? 0 : -1) * dir;
+      }
+
+      va = String(va || "").toLowerCase();
+      vb = String(vb || "").toLowerCase();
+      return va.localeCompare(vb) * dir;
+    });
+  }
+
+  function renderSortIndicators() {
+    el.theadRow.querySelectorAll("th").forEach((th) => {
+      const arrow = th.querySelector(".arrow");
+      const activo = th.dataset.key === state.sortKey;
+      th.classList.toggle("sorted", activo);
+      arrow.textContent = activo ? (state.sortDir === "asc" ? "▲" : "▼") : "";
+    });
+  }
+
+  /* ============ KPIs ============ */
+  function renderKPIs() {
+    const total = state.filtered.reduce((acc, v) => acc + (v.monto || 0), 0);
+    const cantidad = state.filtered.length;
+    const promedio = cantidad > 0 ? total / cantidad : 0;
+
+    el.kpiTotal.textContent = fmtMoneda.format(total);
+    el.kpiPromedio.textContent = fmtMoneda.format(promedio);
+    el.kpiCantidad.innerHTML =
+      fmtNumero.format(cantidad) +
+      (state.ventas.length !== cantidad
+        ? `<small>de ${fmtNumero.format(state.ventas.length)}</small>`
+        : "");
+  }
+
+  /* ============ Tabla ============ */
+  function renderTable() {
+    el.tableBody.innerHTML = "";
+    el.filteredCount.textContent = fmtNumero.format(state.filtered.length);
+    el.totalCount.textContent = fmtNumero.format(state.ventas.length);
+
+    if (state.filtered.length === 0) {
+      el.emptyState.style.display = "block";
+      return;
+    }
+    el.emptyState.style.display = "none";
+
+    const frag = document.createDocumentFragment();
+    state.filtered.forEach((v) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="mono">${fmtFecha(v.fecha)}</td>
+        <td>${escapeHTML(v.vendedor)}</td>
+        <td>${escapeHTML(v.producto)}</td>
+        <td class="monto">${fmtMoneda.format(v.monto || 0)}</td>
+        <td><span class="region-tag">${escapeHTML(v.region || "—")}</span></td>
+      `;
+      frag.appendChild(tr);
+    });
+    el.tableBody.appendChild(frag);
+  }
+
+  function escapeHTML(str) {
+    return String(str || "").replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+  }
+
+  /* ============ Gráfico de dona en SVG puro ============ */
+  el.groupToggle.querySelectorAll("button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.groupBy = btn.dataset.group;
+      el.groupToggle
+        .querySelectorAll("button")
+        .forEach((b) => b.classList.toggle("active", b === btn));
+      renderDonut();
+    });
+  });
+
+  function resolveColor(cssVar) {
+    // Resuelve una variable CSS como "var(--chart-1)" a su valor computado real,
+    // necesario porque los atributos de fill de SVG no interpretan var() en todos los contextos de exportación.
+    const match = cssVar.match(/--[\w-]+/);
+    if (!match) return cssVar;
+    return getComputedStyle(document.body).getPropertyValue(match[0]).trim();
+  }
+
+  function renderDonut() {
+    const campo = state.groupBy;
+    const agregados = {};
+
+    state.filtered.forEach((v) => {
+      const clave = v[campo] || "Sin dato";
+      agregados[clave] = (agregados[clave] || 0) + (v.monto || 0);
+    });
+
+    let entradas = Object.entries(agregados).sort((a, b) => b[1] - a[1]);
+
+    // Agrupar el resto en "Otros" si hay demasiadas categorías
+    const MAX_SEGMENTOS = 6;
+    if (entradas.length > MAX_SEGMENTOS) {
+      const principales = entradas.slice(0, MAX_SEGMENTOS - 1);
+      const resto = entradas.slice(MAX_SEGMENTOS - 1);
+      const sumaResto = resto.reduce((acc, [, v]) => acc + v, 0);
+      entradas = [...principales, ["Otros", sumaResto]];
+    }
+
+    const total = entradas.reduce((acc, [, v]) => acc + v, 0);
+
+    if (total <= 0 || entradas.length === 0) {
+      el.donutHost.innerHTML = "";
+      el.legendHost.innerHTML = `<div class="legend-item"><span class="legend-name">Sin datos para mostrar</span></div>`;
+      return;
+    }
+
+    const tamaño = 200;
+    const centro = tamaño / 2;
+    const radioExterno = 92;
+    const radioInterno = 56;
+
+    let anguloAcumulado = -Math.PI / 2;
+    const paths = [];
+
+    entradas.forEach(([, valor], i) => {
+      const proporcion = valor / total;
+      const anguloBarrido = proporcion * Math.PI * 2;
+      const anguloFin = anguloAcumulado + anguloBarrido;
+
+      const x1e = centro + radioExterno * Math.cos(anguloAcumulado);
+      const y1e = centro + radioExterno * Math.sin(anguloAcumulado);
+      const x2e = centro + radioExterno * Math.cos(anguloFin);
+      const y2e = centro + radioExterno * Math.sin(anguloFin);
+
+      const x1i = centro + radioInterno * Math.cos(anguloFin);
+      const y1i = centro + radioInterno * Math.sin(anguloFin);
+      const x2i = centro + radioInterno * Math.cos(anguloAcumulado);
+      const y2i = centro + radioInterno * Math.sin(anguloAcumulado);
+
+      const granArco = anguloBarrido > Math.PI ? 1 : 0;
+
+      // Si es el único segmento (100%), dibujar un anillo completo evitando el arco degenerado
+      let d;
+      if (entradas.length === 1) {
+        d = `M ${centro - radioExterno} ${centro}
+             A ${radioExterno} ${radioExterno} 0 1 1 ${centro + radioExterno} ${centro}
+             A ${radioExterno} ${radioExterno} 0 1 1 ${centro - radioExterno} ${centro}
+             M ${centro - radioInterno} ${centro}
+             A ${radioInterno} ${radioInterno} 0 1 0 ${centro + radioInterno} ${centro}
+             A ${radioInterno} ${radioInterno} 0 1 0 ${centro - radioInterno} ${centro} Z`;
+      } else {
+        d = `M ${x1e} ${y1e}
+             A ${radioExterno} ${radioExterno} 0 ${granArco} 1 ${x2e} ${y2e}
+             L ${x1i} ${y1i}
+             A ${radioInterno} ${radioInterno} 0 ${granArco} 0 ${x2i} ${y2i} Z`;
+      }
+
+      paths.push({ d, color: CHART_COLORS[i % CHART_COLORS.length] });
+      anguloAcumulado = anguloFin;
+    });
+
+    const svgPaths = paths
+      .map(
+        (p, i) =>
+          `<path d="${p.d}" fill="${resolveColor(p.color)}" stroke="var(--surface)" stroke-width="1.5" data-idx="${i}"></path>`
+      )
+      .join("");
+
+    el.donutHost.innerHTML = `
+      <svg width="${tamaño}" height="${tamaño}" viewBox="0 0 ${tamaño} ${tamaño}" role="img" aria-label="Distribución de ventas por ${campo}">
+        ${svgPaths}
+        <text x="${centro}" y="${centro - 4}" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="600" font-size="18" fill="var(--text)">${fmtNumero.format(entradas.length)}</text>
+        <text x="${centro}" y="${centro + 15}" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="var(--text-muted)">${campo === "producto" ? "productos" : "regiones"}</text>
+      </svg>
+    `;
+
+    el.legendHost.innerHTML = entradas
+      .map(([nombre, valor], i) => {
+        const pct = ((valor / total) * 100).toFixed(1);
+        return `
+          <div class="legend-item">
+            <span class="legend-swatch" style="background:${resolveColor(CHART_COLORS[i % CHART_COLORS.length])}"></span>
+            <span class="legend-name">${escapeHTML(nombre)}</span>
+            <span class="legend-value">${pct}%</span>
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  /* ============ Render general ============ */
+  function render() {
+    renderKPIs();
+    renderTable();
+    renderSortIndicators();
+    renderDonut();
+  }
+
+  /* ============ Arranque ============ */
+  initTheme();
+  state.ventas = DEMO_VENTAS;
+  state.isDemo = true;
+  buildRegionChips();
+  applyFilters();
+  sincronizar();
+})();
+</script>
+</body>
+</html>
